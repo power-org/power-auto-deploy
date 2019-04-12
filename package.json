@@ -4,7 +4,9 @@
   "description": "A web server that is integrated with github webhooks to listen for an event. Each event corresponds to a deployment script.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+	"start": "pm2 reload ecosystem.config.js",
+	"stop": "pm2 stop git-auto-deploy-server",
+	"remove": "pm2 del git-auto-deploy-server"
   },
   "repository": {
     "type": "git",
