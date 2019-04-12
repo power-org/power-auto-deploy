@@ -4,9 +4,9 @@
   "description": "A web server that is integrated with github webhooks to listen for an event. Each event corresponds to a deployment script.",
   "main": "app.js",
   "scripts": {
-	"start": "pm2 reload ecosystem.config.js",
-	"stop": "pm2 stop git-auto-deploy-server",
-	"remove": "pm2 del git-auto-deploy-server"
+    "start": "pm2 reload ecosystem.config.js",
+    "stop": "pm2 stop git-auto-deploy-server",
+    "remove": "pm2 del git-auto-deploy-server"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/power-org/power-auto-deploy#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "pm2": "^3.5.0"

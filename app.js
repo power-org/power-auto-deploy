@@ -4,6 +4,15 @@ const express = require("express");
 const app = express();
 const childProcess = require("child_process");
 
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json()) // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+// enable cors
+const cors = require('cors')
+app.use(cors());
+
 const git = {
   user: process.env.GIT_USER,
   pass: process.env.GIT_PASS
@@ -15,12 +24,14 @@ app.get('/', function(req, res){
 });
 
 app.post("/webhooks/github", function(req, res) {
-  var sender = req.body.sender;
-  var branch = req.body.ref;
+  let sender = req.body.sender;
+  let branch = req.body.ref;
 
-  if (branch.indexOf(process.env.GIT_BRANCH) > -1 && sender.login === git.user) {
+  // console.log('BODY', req.body);
+  // if (branch.indexOf(process.env.GIT_BRANCH) > -1 && sender.login === git.user) {
     deploy(res);
-  }
+  // }else{
+  // }
 });
 
 function deploy(res) {
@@ -29,7 +40,8 @@ function deploy(res) {
       console.error(err);
       return res.send(500);
     }
-    res.send(200);
+    console.log('STDOUT', stdout);
+    res.status(200).send('OK');
   });
 }
 
