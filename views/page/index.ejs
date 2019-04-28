@@ -1,0 +1,133 @@
+<%- include('../head') %>
+<div class="container" style="margin-top: 20px;">
+    <div class="row">
+        <div class="col-12">
+            <% if(error){ %>
+            <div class="alert alert-danger" role="alert">
+                <p><i class="fas fa-info fa-2x"></i> ERROR<br>
+                Kindly set your UUID <b>.env</b> variable to proceed. <br>
+                <b>Message: </b> <%= JSON.stringify(error, null, 2) %><br>
+                </p>
+            </div>
+            <% }else{ %>
+            <div class="alert alert-info" role="alert">
+                <p><i class="fas fa-info"></i> [<%= now.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }) %>] Server starts running... <br>
+                </p>
+            </div>
+                <!-- <b>INFO: </b> <%= JSON.stringify(data, null, 2) %><br> -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addRepo">
+                Add Deployment
+                </button>
+                <br><br>
+                <% data.forEach(function(branch){ %>
+                    <ul class="list-group">
+                        <li class="list-group-item active">
+                        <div class="row">
+                            <div class="col-10">
+                                <i class="fas fa-code-branch"></i> <%= branch.branch %><br><b>[<%= branch.uuid %>]</b><br>
+                            </div>
+                            <div class="col-2">
+
+                            <div class="btn-group" role="group" aria-label="Actions">
+                                <form action="/branch/delete/<%= branch.uuid %>" method="POST">
+                                    <button class="btn-primary white"><i class="fas fa-trash"> </i></button>
+                                </form>
+                                <button class="btn-primary btn-edit white" data-info="<%= JSON.stringify(branch) %>"><i class="fas fa-edit"> </i> </button>
+                            </div>
+                        </div>
+                        </li>
+                        <li class="list-group-item"><i class="fas fa-code-branch"></i> Branch Name: <b><%= branch.name %></b></li>
+                        <li class="list-group-item"><i class="fas fa-file-code"></i> Repo Name: <b><%= branch.repositoryName %></b></li>
+                        <li class="list-group-item"><i class="fas fa-link"></i> Webhook Link: <b><span class="base-url"></span>webhooks/github/<%= branch.uuid %></b></li>
+                        <li class="list-group-item"><i class="fas fa-folder"></i> Directory: <b><%= branch.baseDirectory %></b></li>
+                        <li class="list-group-item"><i class="fas fa-scroll"></i> Script <br>
+                        <textarea readonly class="form-control" style="background-color:black;color:white;width:100%" row="5">
+                            <%= branch.script.replace(/\r/gim, "") %>
+                        </textarea></li>
+                    </ul>
+                <% }); %>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editRepo" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Edit Deployment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/branch/edit" method="POST" id="frm-edit">
+        <div class="form-group">
+            <label for="branch">Branch Name</label>
+            <input type="text" class="form-control" name="branch" placeholder="Your Branch Name">
+        </div>
+        <div class="form-group">
+            <label for="repo">Repo Name</label>
+            <input type="text" class="form-control" name="repo" placeholder="Your Repository Name">
+        </div>
+        <div class="form-group">
+            <label for="dir">Directory</label>
+            <input type="text" class="form-control" name="dir" placeholder="Project Directory">
+        </div>
+        <div class="form-group">
+            <label for="script">Script</label>
+            <textarea class="form-control" name="script" placeholder="Deployment Script">
+            #!/bin/bash
+            </textarea>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="btn-save">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="addRepo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Deployment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/branch/add" method="POST" id="frm-create">
+        <div class="form-group">
+            <label for="branch">Branch Name</label>
+            <input type="text" class="form-control" name="branch" placeholder="Your Branch Name">
+        </div>
+        <div class="form-group">
+            <label for="repo">Repo Name</label>
+            <input type="text" class="form-control" name="repo" placeholder="Your Repository Name">
+        </div>
+        <div class="form-group">
+            <label for="dir">Directory</label>
+            <input type="text" class="form-control" name="dir" placeholder="Project Directory">
+        </div>
+        <div class="form-group">
+            <label for="script">Script</label>
+            <textarea class="form-control" name="script" placeholder="Deployment Script">
+            #!/bin/bash
+            </textarea>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="btn-create">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../footer') %>
