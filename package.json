@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
 	"dev": "nodemon server.js",
-    "start": "pm2 reload ecosystem.config.js",
+    "start": "npm run build && pm2 reload ecosystem.config.js",
     "stop": "pm2 stop git-auto-deploy-server",
     "remove": "pm2 del git-auto-deploy-server",
     "build": " webpack --display-error-details --hide-modules --progress --config webpack.config.js"
