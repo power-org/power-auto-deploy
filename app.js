@@ -58,8 +58,7 @@ app.get('/', function(req, res){
           branch: "master",
           name: "master",
           baseDirectory: require('os').homedir(),
-          script: `#!/bin/bash
-          echo Branch : master`
+          script: `echo START DEPLOY SCRIPT HERE!!`
         }
       ];
       REDIS.create(process.env.UUID, defaultSettings).then(data=>{

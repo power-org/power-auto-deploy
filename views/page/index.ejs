@@ -41,9 +41,7 @@
                         <li class="list-group-item"><i class="fas fa-link"></i> Webhook Link: <b><span class="base-url"></span>webhooks/github/<%= branch.uuid %></b></li>
                         <li class="list-group-item"><i class="fas fa-folder"></i> Directory: <b><%= branch.baseDirectory %></b></li>
                         <li class="list-group-item"><i class="fas fa-scroll"></i> Script <br>
-                        <textarea readonly class="form-control" style="background-color:black;color:white;width:100%" row="5">
-                            <%= branch.script.replace(/\r/gim, "") %>
-                        </textarea></li>
+                        <textarea readonly class="form-control" style="background-color:black;color:white;width:100%" row="5"><%= branch.script.replace(/\r/gim, "") %></textarea></li>
                     </ul>
                 <% }); %>
             <% } %>
@@ -76,9 +74,7 @@
         </div>
         <div class="form-group">
             <label for="script">Script</label>
-            <textarea class="form-control" name="script" placeholder="Deployment Script">
-            #!/bin/bash
-            </textarea>
+            <textarea class="form-control" name="script" placeholder="Deployment Script" row="5"></textarea>
         </div>
         </form>
       </div>
