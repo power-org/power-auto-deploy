@@ -33,8 +33,8 @@ app.use('/static', express.static(path.join(__dirname, 'dist')));
 const now = new Date();
 
 app.get('/', function(req, res){
-  // res.send('NOTHING HERE');
-  // return;
+  res.send(`[${now}]Server Running...`);
+  return;
   let render = {
     data: null,
     error: null
