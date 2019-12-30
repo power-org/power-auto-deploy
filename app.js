@@ -1,4 +1,4 @@
-require('dotenv').config({silent: true})
+require('dotenv').config({ silent: true })
 
 const express = require("express");
 const app = express();
@@ -32,27 +32,27 @@ app.use('/static', express.static(path.join(__dirname, 'dist')));
 
 const now = new Date();
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
   res.send(`[${now}]Server Running...`);
   return;
   let render = {
     data: null,
     error: null
   };
-  if(process.env.UUID == "" || process.env.UUID == undefined){
+  if (process.env.UUID == "" || process.env.UUID == undefined) {
     render.error = 'UUID is not properly set.';
     return res.render('page/index', {
       now: now,
       ...render
     });
-  }else{
-    REDIS.get(process.env.UUID).then(data=>{
+  } else {
+    REDIS.get(process.env.UUID).then(data => {
       render.data = data;
       res.render('page/index', {
         now: now,
         ...render
       });
-    }).catch(errors=>{
+    }).catch(errors => {
       let defaultSettings = [
         {
           uuid: require('uuid/v4')(),
@@ -63,11 +63,11 @@ app.get('/', function(req, res){
           script: `echo START DEPLOY SCRIPT HERE!!`
         }
       ];
-      REDIS.create(process.env.UUID, defaultSettings).then(data=>{
+      REDIS.create(process.env.UUID, defaultSettings).then(data => {
         render.data = defaultSettings;
-      }).catch(error=>{
+      }).catch(error => {
         render.error = error;
-      }).finally(()=>{
+      }).finally(() => {
         res.render('page/index', {
           now: now,
           ...render
@@ -77,29 +77,33 @@ app.get('/', function(req, res){
   }
 });
 
-app.post("/webhooks/github/:repoUuid", function(req, res) {
-  REDIS.get(process.env.UUID).then(data=>{
-    let getBranch = data.filter(e=>e.uuid===req.params.repoUuid);
-    if(getBranch.length > 0){
+app.post("/webhooks/github/:repoUuid", function (req, res) {
+  REDIS.get(process.env.UUID).then(data => {
+    console.log('data', data);
+    let getBranch = data.filter(e => e.uuid === req.params.repoUuid);
+    console.log('getBranch', getBranch);
+    if (getBranch.length > 0) {
       let branchDetails = getBranch[0];
-      if(['push'].indexOf(req.headers["x-github-event"])>-1){
+      if (['push'].indexOf(req.headers["x-github-event"]) > -1) {
+        console.log('push', req.headers);
+        req.body = JSON.parse(req.body.payload);
         let branch = req.body.ref;
         let repository = req.body.repository.name;
-        if(branch.indexOf(branchDetails.branch) > -1 && repository.indexOf(branchDetails.repositoryName) > -1){
+        if (branch.indexOf(branchDetails.branch) > -1 && repository.indexOf(branchDetails.repositoryName) > -1) {
           QUEUE.createJob(branchDetails);
           res.status(200).send('SUCCESS - JOB DEPLOYMENT On-QUEUE');
-        }else{
+        } else {
           res.status(500).send('FAILED - branch and repository doesnt match with webhook details.');
         }
-      }else if(['ping'].indexOf(req.headers["x-github-event"])>-1){
+      } else if (['ping'].indexOf(req.headers["x-github-event"]) > -1) {
         res.status(200).send('PING SUCCESS');
-      }else{
+      } else {
         res.status(500).send(`FAILED - Event ${req.headers["x-github-event"]} is not registered`);
       }
-    }else{
+    } else {
       res.status(500).send('FAILED - Webhook details not found. Check your repository uuid.');
     }
-  }).catch(error=>{
+  }).catch(error => {
     res.status(500).send('FAILED - UUID is not initialized.');
   });
 });
@@ -107,6 +111,6 @@ app.post("/webhooks/github/:repoUuid", function(req, res) {
 app.use("/branch", require('./routes'))
 
 const port = process.env.PORT;
-app.listen(port , ()=>{
-  console.log('Endpoint: http://localhost:'+port);
+app.listen(port, () => {
+  console.log('Endpoint: http://localhost:' + port);
 })
